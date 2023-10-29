@@ -38,6 +38,8 @@ Route::delete('/category/delete', [CategoryController::class, 'deleteCategory'] 
 
 Route::get('/posts',[PostController::class,'getAllPost']);
 Route::get('/post/{post_id}',[PostController::class,'getPostbyid']);
+Route::get('posts/filter', [PostController::class,'getPostsByCategory']);
+Route::get('/search/posts',[PostController::class,'SearchPost']);
 // Route::get('posts/user',[PostController::class,'getAllPostUser']);
 Route::post('/register',[Controller::class,'register']);
 Route::post('/login',[Controller::class,'verifyLogin']);
@@ -46,13 +48,16 @@ Route::post('/login',[Controller::class,'verifyLogin']);
 // Middleware 
 Route::group(['middleware'=>['auth:sanctum']],function(){// use token
     Route::get('/user',[Controller::class,'user'] ) ;
+    Route::put('/edit-profile',[Controller::class,'editProfile']);
+    Route::delete('/delete-user',[Controller::class,'dropUser']);
+    Route::put('/change-password',[Controller::class,'changePassword']);
     Route::post('/logout',[Controller::class,'logout']);
     //posts route
     Route::post("/user/post",[PostController::class,'CreatePost']);
     Route::put("/user/edit/{post_id}",[PostController::class,'UpdatePost']);
     Route::delete("/user/delete/{post_id}",[PostController::class,'deletePost']);
     Route::get('/posts/user',[PostController::class,'getAllPostUser']); 
-    Route::get('posts/user/{user_id}/filter', [PostController::class,'getPostsByCategory']);
+   
     Route::get('/post/user/{post_id}',[PostController::class,'getPostUserByPostId']);
     
     //bookmark route

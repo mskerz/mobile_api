@@ -12,7 +12,7 @@ class CategoryController extends Controller
 {
     //
     public function getCategories(){
-        $categories = Category::orderBy('created_at','DESC')->limit(10)->get();
+        $categories = Category::orderBy('id','ASC')->limit(10)->get();
         return response()->json($categories);
     }
     public function getCategory($category_id){

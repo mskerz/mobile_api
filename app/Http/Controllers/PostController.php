@@ -17,8 +17,7 @@ class PostController extends Controller
             ->join('categories', 'posts.category_id', '=', 'categories.id')
             ->select('posts.id', 'posts.title', 'posts.details','users.name as username', 'posts.images', 'categories.title as category', 'posts.created_at', 'posts.updated_at')
             ->get();
-
-        return response()->json($posts);
+         return $posts;
     }
 
     function getPostbyId($post_id){
@@ -51,20 +50,33 @@ class PostController extends Controller
 
     public function getPostsByCategory(Request $request) {
         $category_id = $request->input('category_id');
-
-        $posts = DB::table('posts')
+        $posts = Post::orderBy('updated_at', 'desc')
             ->join('users', 'posts.user_id', '=', 'users.id')
             ->join('categories', 'posts.category_id', '=', 'categories.id')
-            ->where('users.id', auth()->user()->id)
             ->where('categories.id', $category_id)
-            ->select('posts.title', 'posts.details','users.name as username','posts.images', 'categories.title as category' , 'posts.created_at', 'posts.updated_at')
+            ->select('posts.id','posts.title', 'posts.details','posts.images','users.name as username' , 'categories.title as category', 'posts.created_at', 'posts.updated_at')
             ->get();
-    
         return response()->json($posts);
     }
     
     public function uploadImage($image){
 
+    }
+
+    public function SearchPost(Request $request) {
+        $search = $request->input('search'); 
+        $posts = Post::orderBy('created_at', 'desc')
+            ->join('users', 'posts.user_id', '=', 'users.id')
+            ->join('categories', 'posts.category_id', '=', 'categories.id')
+            ->where(function ($query) use ($search) {
+                $query->where('users.name', 'LIKE', "%$search%") // ค้นหาโพสต์จากชื่อผู้เขียน
+                    ->orWhere('posts.title', 'LIKE', "%$search%") // ค้นหาโพสต์จากชื่อโพสต์
+                    ->orWhere('posts.details', 'LIKE', "%$search%"); // ค้นหาโพสต์จากเนื้อหาในโพสต์
+            })
+            ->select('posts.id','posts.title', 'posts.details','posts.images','users.name as username' , 'categories.title as category', 'posts.created_at', 'posts.updated_at')
+            ->get();
+    
+        return response()->json($posts);
     }
 
 
@@ -102,6 +114,7 @@ class PostController extends Controller
                 'details'=> $request['details'],
                 "category_id"=> $request['category_id'],
                 "user_id"=> auth()->user()->id,
+                "images"=> $request['images'],
             ]
             );
         $post->created_at = $now;

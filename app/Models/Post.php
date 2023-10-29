@@ -11,9 +11,12 @@ class Post extends Model
 {
     use HasFactory,SoftDeletes;
 
-    protected $fillable = ['title', 'details','category_id','user_id'];
+    protected $fillable = ['title', 'details','category_id','user_id','images'];
     protected $dates = ['deleted_at'];
-
+    protected $casts = [
+        'created_at' => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s',
+    ];
     
     public function user(){
         return $this->belongsTo(User::class);
