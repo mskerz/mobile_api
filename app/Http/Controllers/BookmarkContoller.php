@@ -24,7 +24,7 @@ class BookmarkContoller extends Controller
         ->join('bookmarks_user', 'posts.id', '=','bookmarks_user.post_id')
         ->join('categories', 'posts.category_id', '=', 'categories.id')
         ->where('bookmarks_user.user_id', $id)
-        ->select('posts.id','posts.title', 'posts.details','posts.images' ,'users.name as username' , 'categories.title as category', 'posts.created_at', 'posts.updated_at')
+        ->select('posts.id','posts.title', 'posts.details','posts.images','users.name as username' , 'categories.title as category',  'posts.category_id','posts.created_at', 'posts.updated_at')
         ->get();
 
          return response()->json($posts);

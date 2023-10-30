@@ -29,6 +29,7 @@ Route::get('/', function () {
 
 
 Route::get('/categories', [CategoryController::class, 'getCategories'] );
+Route::get('/categories-notzero', [CategoryController::class, 'getCategories_forcreate'] );
 Route::get('/category/{category_id}', [CategoryController::class, 'getCategory'] );
 Route::post('/category/create', [CategoryController::class, 'createCategory'] );
 Route::put('/category/update', [CategoryController::class, 'updateCategory'] );
@@ -54,8 +55,8 @@ Route::group(['middleware'=>['auth:sanctum']],function(){// use token
     Route::post('/logout',[Controller::class,'logout']);
     //posts route
     Route::post("/user/post",[PostController::class,'CreatePost']);
-    Route::put("/user/edit/{post_id}",[PostController::class,'UpdatePost']);
-    Route::delete("/user/delete/{post_id}",[PostController::class,'deletePost']);
+    Route::put("/user/edit/post/{post_id}",[PostController::class,'UpdatePost']);
+    Route::delete("/user/delete/post/{post_id}",[PostController::class,'deletePost']);
     Route::get('/posts/user',[PostController::class,'getAllPostUser']); 
    
     Route::get('/post/user/{post_id}',[PostController::class,'getPostUserByPostId']);

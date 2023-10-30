@@ -15,7 +15,7 @@ class PostController extends Controller
         $posts = Post::orderBy('updated_at', 'desc')
             ->join('users', 'posts.user_id', '=', 'users.id')
             ->join('categories', 'posts.category_id', '=', 'categories.id')
-            ->select('posts.id', 'posts.title', 'posts.details','users.name as username', 'posts.images', 'categories.title as category', 'posts.created_at', 'posts.updated_at')
+            ->select('posts.id', 'posts.title', 'posts.details','users.name as username', 'posts.images', 'categories.title as category', 'posts.category_id','posts.created_at', 'posts.updated_at')
             ->get();
          return $posts;
     }
@@ -25,7 +25,7 @@ class PostController extends Controller
         ->join('users', 'posts.user_id', '=', 'users.id')
         ->join('categories', 'posts.category_id', '=', 'categories.id')
         ->where('posts.id', $post_id) // Add a condition to filter by post_id
-        ->select('posts.id','posts.title', 'posts.details','posts.images','users.name as username' , 'categories.title as category', 'posts.created_at', 'posts.updated_at')
+        ->select('posts.id','posts.title', 'posts.details','posts.images','users.name as username' , 'categories.title as category','posts.category_id', 'posts.created_at', 'posts.updated_at')
         ->first();
         return response()->json($post);
     }
@@ -42,7 +42,7 @@ class PostController extends Controller
         ->join('users', 'posts.user_id', '=', 'users.id')
         ->join('categories', 'posts.category_id', '=', 'categories.id')
         ->where('users.id', $id)
-        ->select('posts.id','posts.title', 'posts.details','posts.images','users.name as username' , 'categories.title as category', 'posts.created_at', 'posts.updated_at')
+        ->select('posts.id','posts.title', 'posts.details','posts.images','users.name as username' , 'categories.title as category',  'posts.category_id','posts.created_at', 'posts.updated_at')
         ->get();
 
          return response()->json($posts);
@@ -54,14 +54,12 @@ class PostController extends Controller
             ->join('users', 'posts.user_id', '=', 'users.id')
             ->join('categories', 'posts.category_id', '=', 'categories.id')
             ->where('categories.id', $category_id)
-            ->select('posts.id','posts.title', 'posts.details','posts.images','users.name as username' , 'categories.title as category', 'posts.created_at', 'posts.updated_at')
+            ->select('posts.id','posts.title', 'posts.details','posts.images','users.name as username' , 'categories.title as category','posts.category_id', 'posts.created_at', 'posts.updated_at')
             ->get();
         return response()->json($posts);
     }
     
-    public function uploadImage($image){
-
-    }
+     
 
     public function SearchPost(Request $request) {
         $search = $request->input('search'); 
@@ -96,7 +94,7 @@ class PostController extends Controller
             ->join('categories', 'posts.category_id', '=', 'categories.id')
             ->where('users.id', $id)
             ->where('posts.id', $post_id) // Add a condition to filter by post_id
-            ->select('posts.id', 'posts.title', 'posts.details','posts.images' , 'categories.title as category', 'posts.created_at', 'posts.updated_at')
+            ->select('posts.id', 'posts.title', 'posts.details','posts.images' , 'users.name as username' ,'categories.title as category','posts.category_id', 'posts.created_at', 'posts.updated_at')
             ->first(); // Use 'first' to get a single post
     
         if (!$post) {
@@ -120,7 +118,7 @@ class PostController extends Controller
         $post->created_at = $now;
         $post->updated_at =  $post->created_at;    
             
-        return $post;
+        return response()->json(['message' => 'create post success'], 200);
     }
     public function UpdatePost(Request $request,$post_id){
         $post = Post::find($post_id);
@@ -128,7 +126,7 @@ class PostController extends Controller
          
         $now = Carbon::now()->addHours(7);
         if(!$post){
-            return response()->json(["Message"=>"not found Post for Update"]);
+            return response()->json(["Message"=>"not found Post for Update"],403);
         }
         $post->title = $request->title;
         $post->details = $request->details;
@@ -138,7 +136,7 @@ class PostController extends Controller
         $post->updated_at = $now;
         $post->save();
     
-        return $post;
+        return response()->json(['message' => 'edit post success'], 200);
     }
     
     
